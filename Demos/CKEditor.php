@@ -31,8 +31,8 @@ session_write_close();
   <title>MooTools FileManager CKEditor example</title>
   
   <!-- thirdparty/MooTools -->
-  <script type="text/javascript" src="mootools-core.js"></script>
-  <script type="text/javascript" src="mootools-more.js"></script>
+  <script type="text/javascript" src="../../../../../lib/includes/js/mootools-core.js"></script>
+  <script type="text/javascript" src="../../../../../lib/includes/js/mootools-more.js"></script>
   
   <!-- thirdparty/MooTools-FileManager -->
   <script type="text/javascript" src="../Source/FileManager.js"></script>

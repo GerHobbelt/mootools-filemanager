@@ -36,8 +36,8 @@ session_write_close();
 
 	<script type="text/javascript" src="../../../../../lib/includes/js/tiny_mce/jscripts/tiny_mce/tiny_mce_src.js"></script>
 
-	<script type="text/javascript" src="mootools-core.js"></script>
-	<script type="text/javascript" src="mootools-more.js"></script>
+	<script type="text/javascript" src="../../../../../lib/includes/js/mootools-core.js"></script>
+	<script type="text/javascript" src="../../../../../lib/includes/js/mootools-more.js"></script>
 
 	<script type="text/javascript" src="../Source/FileManager.js"></script>
 	<script type="text/javascript" src="../Source/Uploader/Fx.ProgressBar.js"></script>

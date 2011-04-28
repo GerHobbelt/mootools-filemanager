@@ -1,7 +1,9 @@
 <?php
+//die("<html><body><h1>Security precaution</h1> <p>To enable the test code, edit <file>Demos/".basename(__FILE__)."</file> and comment out line 2.</p></body></html>");
 
 error_reporting(E_ALL | E_STRICT);
 
+define("COMPACTCMS_CODE", true);
 define('FILEMANAGER_CODE', true);
 
 
@@ -29,8 +31,8 @@ if (!session_start()) die('session_start() failed');
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <link rel="stylesheet" href="demos.css" type="text/css" />
   
-	<script type="text/javascript" src="mootools-core.js"></script>
-	<script type="text/javascript" src="mootools-more.js"></script>
+  <script type="text/javascript" src="../../../../../lib/includes/js/mootools-core.js"></script>
+  <script type="text/javascript" src="../../../../../lib/includes/js/mootools-more.js"></script>
   
   <script type="text/javascript" src="../Source/FileManager.js"></script>
   <script type="text/javascript" src="../Source/Gallery.js"></script>
