@@ -467,12 +467,12 @@ FileManager.Gallery = new Class({
 			},
 			onError: function() {
 				self.diag.log('image asset: error!');
-				var iconpath = self.assetBasePath + 'Images/Icons/Large/default-error.png';
+				var iconpath = self.URLpath4assets + 'Images/Icons/Large/default-error.png';
 				this.src = iconpath;
 			},
 			onAbort: function() {
 				self.diag.log('image asset: ABORT!');
-				var iconpath = self.assetBasePath + 'Images/Icons/Large/default-error.png';
+				var iconpath = self.URLpath4assets + 'Images/Icons/Large/default-error.png';
 				this.src = iconpath;
 			}
 		});
@@ -521,7 +521,7 @@ FileManager.Gallery = new Class({
 
 		// store & display item in gallery:
 		var self = this;
-		var destroyIcon = Asset.image(this.assetBasePath + 'Images/destroy.png').set({
+		var destroyIcon = Asset.image(this.URLpath4assets + 'Images/destroy.png').set({
 			'class': 'filemanager-remove',
 			title: this.language.gallery.remove,
 			events: {

@@ -103,7 +103,7 @@ session_write_close();
 
 			var manager4 = new FileManager.Gallery({
 				url: 'selectImage.php?exhibit=A', // 'manager.php', but with a bogus query parameter included: latest FM can cope with such an URI
-				assetBasePath: '../Assets',
+				URLpath4assets: '../Assets',
 				filter: 'image',
 				hideOnClick: true,
 				// uploadAuthData is deprecated; use propagateData instead. The session cookie(s) are passed through Flash automatically, these days...

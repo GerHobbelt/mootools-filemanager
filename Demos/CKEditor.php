@@ -61,7 +61,7 @@ session_write_close();
 
 			var fileManager = new FileManager({
 				url: 'manager.php',
-				assetBasePath: '../Assets',
+				URLpath4assets: '../Assets',
 				language: "<?php echo $_GET['langCode']; ?>",
 				destroy: true,
 				upload: true,

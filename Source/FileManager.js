@@ -74,7 +74,7 @@ var FileManager = new Class({
 		 */
 		directory: '',                    // (string) the directory (relative path) which should be loaded on startup (show).
 		url: null,
-		assetBasePath: null,
+		URLpath4assets: null,
 		language: 'en',
 		selectable: false,
 		destroy: false,
@@ -84,7 +84,7 @@ var FileManager = new Class({
 		createFolders: false,
 		filter: '',
 		detailInfoMode: '',               // (string) whether you want to receive extra metadata on select/etc. and/or view this metadata in the preview pane (modes: '', '+metaHTML', '+metaJSON'. Modes may be combined)
-		deliverPathAsLegalURL: false,     // (boolean) TRUE: deliver 'legal URL' paths, i.e. 'directory'-rooted, FALSE: deliver absolute URI paths.
+		deliverPathAsLegalURL: false,     // (boolean) TRUE: deliver 'legal URL' paths, i.e. PHP::options['URLpath4FileManagedDirTree']-rooted (~ this.root), FALSE: deliver absolute URI paths.
 		hideOnClick: false,
 		hideClose: false,
 		hideOverlay: false,
@@ -121,7 +121,7 @@ var FileManager = new Class({
 		this.diag.verbose = this.options.verbose;
 		this.ID = String.uniqueID();
 		this.droppables = [];
-		this.assetBasePath = this.options.assetBasePath.replace(/(\/|\\)*$/, '/');
+		this.URLpath4assets = this.options.URLpath4assets.replace(/(\/|\\)*$/, '/');
 		this.root = null;
 		this.CurrentDir = null;
 		this.listType = 'list';
@@ -546,7 +546,7 @@ var FileManager = new Class({
 			this.tips.attach(this.closeIcon);
 		}
 
-		this.imageadd = Asset.image(this.assetBasePath + 'Images/add.png', {
+		this.imageadd = Asset.image(this.URLpath4assets + 'Images/add.png', {
 			'class': 'browser-add',
 			styles:
 			{
@@ -2038,7 +2038,7 @@ var FileManager = new Class({
 			new Element('span', {
 				'class': this.listType,
 				'styles': {
-					'background-image': 'url(' + (thumbnail_url ? thumbnail_url : this.assetBasePath + 'Images/loader.gif') + ')'
+					'background-image': 'url(' + (thumbnail_url ? thumbnail_url : this.URLpath4assets + 'Images/loader.gif') + ')'
 				}
 			}).addClass('fm-thumb-bg'),
 			new Element('span', {'class': 'filemanager-filename', text: file.name, title: file.name})
@@ -2056,7 +2056,7 @@ var FileManager = new Class({
 				'styles': {
 					'width': this.options.thumbSize4DirGallery + 'px',
 					'height': this.options.thumbSize4DirGallery + 'px',
-					'background-image': 'url(' + (thumbnail_url ? thumbnail_url : this.assetBasePath + 'Images/loader.gif') + ')'
+					'background-image': 'url(' + (thumbnail_url ? thumbnail_url : this.URLpath4assets + 'Images/loader.gif') + ')'
 				}
 			}),
 			new Element('div', {
@@ -2128,12 +2128,12 @@ var FileManager = new Class({
 			},
 			onError: function() {
 				self.diag.log('dirgallery image asset: error!');
-				var iconpath = self.assetBasePath + 'Images/Icons/Large/default-error.png';
+				var iconpath = self.URLpath4assets + 'Images/Icons/Large/default-error.png';
 				dg_el.getElement('div.dir-gal-thumb-bg').setStyle('background-image', 'url(' + iconpath + ')');
 			},
 			onAbort: function() {
 				self.diag.log('dirgallery image asset: ABORT!');
-				var iconpath = self.assetBasePath + 'Images/Icons/Large/default-error.png';
+				var iconpath = self.URLpath4assets + 'Images/Icons/Large/default-error.png';
 				dg_el.getElement('div.dir-gal-thumb-bg').setStyle('background-image', 'url(' + iconpath + ')');
 			}
 		});
@@ -2222,7 +2222,7 @@ var FileManager = new Class({
 
 			editButtons.each(function(v) {
 				//icons.push(
-				Asset.image(this.assetBasePath + 'Images/' + v + '.png', {title: this.language[v]}).addClass('browser-icon').set('opacity', 0).addEvent('mouseup', (function(e, target) {
+				Asset.image(this.URLpath4assets + 'Images/' + v + '.png', {title: this.language[v]}).addClass('browser-icon').set('opacity', 0).addEvent('mouseup', (function(e, target) {
 					// this = el, self = FM instance
 					e.preventDefault();
 					this.store('edit', true);
@@ -2309,7 +2309,7 @@ var FileManager = new Class({
 					dg_el = this.dir_gallery_item_maker(file.icon48, file);
 
 					el = (function(file, dg_el) {           // Closure
-						var iconpath = this.assetBasePath + 'Images/Icons/' + (this.listType === 'thumb' ? 'Large/' : '') + 'default-error.png';
+						var iconpath = this.URLpath4assets + 'Images/Icons/' + (this.listType === 'thumb' ? 'Large/' : '') + 'default-error.png';
 						var list_row = this.list_row_maker((this.listType === 'thumb' ? file.icon48 : file.icon), file);
 
 						var tx_cfg = this.options.mkServerRequestURL(this, 'detail', {
@@ -2443,7 +2443,7 @@ var FileManager = new Class({
 				if (this.options.destroy) editButtons.push('destroy');
 
 				editButtons.each(function(v) {
-					Asset.image(this.assetBasePath + 'Images/' + v + '.png', {title: this.language[v]}).addClass('browser-icon').set('opacity', 0).addEvent('mouseup', (function(e, target) {
+					Asset.image(this.URLpath4assets + 'Images/' + v + '.png', {title: this.language[v]}).addClass('browser-icon').set('opacity', 0).addEvent('mouseup', (function(e, target) {
 						// this = el, self = FM instance
 						e.preventDefault();
 						this.store('edit', true);
@@ -2974,7 +2974,7 @@ var FileManager = new Class({
 
 					if (prev && !j.thumb250 && j.thumbs_deferred)
 					{
-						var iconpath = this.assetBasePath + 'Images/Icons/Large/default-error.png';
+						var iconpath = this.URLpath4assets + 'Images/Icons/Large/default-error.png';
 
 						if (0)
 						{

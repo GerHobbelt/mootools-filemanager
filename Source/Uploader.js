@@ -146,10 +146,10 @@ FileManager.implement({
 				});
 
 				this.ui = {};
-				this.ui.icon = new Asset.image(self.assetBasePath+'Images/Icons/' + this.extension + '.png', {
+				this.ui.icon = new Asset.image(self.URLpath4assets+'Images/Icons/' + this.extension + '.png', {
 					'class': 'icon',
 					onerror: function() {
-						new Asset.image(self.assetBasePath + 'Images/Icons/default.png').replaces(this);
+						new Asset.image(self.URLpath4assets + 'Images/Icons/default.png').replaces(this);
 					}
 				});
 				this.ui.element = new Element('li', {'class': 'file', id: 'file-' + this.id});
@@ -162,14 +162,14 @@ FileManager.implement({
 				this.ui.size = new Element('span', {'class': 'file-size', text: Swiff.Uploader.formatUnit(this.size, 'b')});
 
 				var file = this;
-				this.ui.cancel = new Asset.image(self.assetBasePath+'Images/cancel.png', {'class': 'file-cancel', title: self.language.cancel}).addEvent('click', function() {
+				this.ui.cancel = new Asset.image(self.URLpath4assets+'Images/cancel.png', {'class': 'file-cancel', title: self.language.cancel}).addEvent('click', function() {
 					file.remove();
 					self.tips.hide();
 					self.tips.detach(this);
 				});
 				self.tips.attach(this.ui.cancel);
 
-				var progress = new Element('img', {'class': 'file-progress', src: self.assetBasePath+'Images/bar.gif'});
+				var progress = new Element('img', {'class': 'file-progress', src: self.URLpath4assets+'Images/bar.gif'});
 
 				this.ui.element.adopt(
 					this.ui.cancel,
@@ -302,7 +302,7 @@ FileManager.implement({
 		this.diag.log('Uploader: SWF init');
 		this.swf = new Swiff.Uploader({
 			id: 'SwiffFileManagerUpload',
-			path: this.assetBasePath + 'Swiff.Uploader.swf',
+			path: this.URLpath4assets + 'Swiff.Uploader.swf',
 			queued: false,
 			target: this.upload.button,
 			allowDuplicates: true,

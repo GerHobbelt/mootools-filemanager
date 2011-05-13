@@ -63,7 +63,7 @@ class FileManagerWithAliasSupport extends FileManager
 		{
 			$alias_arr = $this->options['Aliases'];
 
-			// collect the set of aliases per parent directory: we need a fully set up options['directory'] for this now
+			// collect the set of aliases per parent directory: we need a fully set up options['URLpath4FileManagedDirTree'] for this now
 			$scandir_lookup_arr = array();
 
 			// NOTE: we can use any of the url2file_path methods here as those only use the raw [Aliases] array
@@ -130,7 +130,7 @@ class FileManagerWithAliasSupport extends FileManager
 		$tndir = null;
 		if (!$see_thumbnail_dir)
 		{
-			$tn_uri = $this->options['thumbnailPath'];
+			$tn_uri = $this->options['URLpath4thumbnails'];
 			$tnpath = $this->url_path2file_path($tn_uri);
 			//if (FileManagerUtility::startswith($dir, $tnpath))
 			//  return false;
@@ -232,7 +232,7 @@ class FileManagerWithAliasSupport extends FileManager
 	{
 		$url_path = $this->rel2abs_legal_url_path($url_path);
 
-		$url_path = substr($this->options['directory'], 0, -1) . $url_path;
+		$url_path = substr($this->options['URLpath4FileManagedDirTree'], 0, -1) . $url_path;
 
 		$path = $this->url_path2file_path($url_path);
 

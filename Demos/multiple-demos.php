@@ -86,7 +86,7 @@ if (0)
 				url: 'manager.php',
 				language: 'en',
 				hideOnClick: true,
-				assetBasePath: '../Assets',
+				URLpath4assets: '../Assets',
 				// uploadAuthData is deprecated; use propagateData instead. The session cookie(s) are passed through Flash automatically, these days...
 				uploadAuthData: {
 					session: 'MySessionData'
@@ -139,7 +139,7 @@ if (0)
 					div.destroy();
 				}
 				var icon = new Asset.image(
-					mgr.assetBasePath+'Images/cancel.png',
+					mgr.URLpath4assets+'Images/cancel.png',
 					{
 						'class': 'file-cancel',
 						title: 'deselect'
@@ -193,7 +193,7 @@ if (0)
 				language: 'en',
 				filter: 'image',
 				hideOnClick: true,
-				assetBasePath: '../Assets',
+				URLpath4assets: '../Assets',
 				// uploadAuthData is deprecated; use propagateData instead. The session cookie(s) are passed through Flash automatically, these days...
 				uploadAuthData: {
 					session: 'MySessionData'
@@ -229,7 +229,7 @@ if (0)
 				url: 'manager.php',
 				language: 'de',
 				hideOnClick: true,
-				assetBasePath: '../Assets',
+				URLpath4assets: '../Assets',
 				// uploadAuthData is deprecated; use propagateData instead. The session cookie(s) are passed through Flash automatically, these days...
 				uploadAuthData: {
 					session: 'MySessionData'
@@ -280,7 +280,7 @@ if (0)
 
 			var manager4 = new FileManager.Gallery({
 				url: 'selectImage.php?exhibit=A', // 'manager.php', but with a bogus query parameter included: latest FM can cope with such an URI
-				assetBasePath: '../Assets',
+				URLpath4assets: '../Assets',
 				filter: 'image',
 				hideOnClick: true,
 				// uploadAuthData is deprecated; use propagateData instead. The session cookie(s) are passed through Flash automatically, these days...

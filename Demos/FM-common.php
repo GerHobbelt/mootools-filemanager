@@ -447,11 +447,11 @@ function mkNewFileManager($options = null)
 	}
 
 	$options = array_merge(array(
-			//'directory' => $fm_basedir . 'Files/',   // absolute paths: as the relative ones, they sit in URI space, i.e. assume DocumentRoot is root '/'
+			//'URLpath4FileManagedDirTree' => $fm_basedir . 'Files/',   // absolute paths: as the relative ones, they sit in URI space, i.e. assume DocumentRoot is root '/'
 
-			'directory' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__) or rather: $_SERVER['SCRIPT_NAME']
-			'thumbnailPath' => 'Files/Thumbnails/',
-			'assetBasePath' => '../Assets',
+			'URLpath4FileManagedDirTree' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__) or rather: $_SERVER['SCRIPT_NAME']
+			'URLpath4thumbnails' => 'Files/Thumbnails/',
+			'URLpath4assets' => '../Assets',
 			'chmod' => 0777,
 			//'maxUploadSize' => 1024 * 1024 * 5,
 			//'upload' => false,
@@ -472,7 +472,7 @@ function mkNewFileManager($options = null)
 
 			// FileManagerWithAliasSupport-specific options:
 			'Aliases' => $Aliases,
-			'RequestScriptURI' => strtr($_SERVER['SCRIPT_NAME'], '\\', '/')   // or whatever URL you fancy. As long as the run-time ends up invoking the $browser class instantiated below on each request
+			'URIpath4RequestScript' => strtr($_SERVER['SCRIPT_NAME'], '\\', '/')   // or whatever URL you fancy. As long as the run-time ends up invoking the $browser class instantiated below on each request
 	), (is_array($options) ? $options : array()));
 
 	if (SITE_USES_ALIASES)

@@ -141,9 +141,9 @@ if (01) // debugging
 
 
 $browser = new FileManagerWithAliasSupport(array(
-	'directory' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__)
-	//'thumbnailPath' => 'Files/Thumbnails/',
-	'assetBasePath' => '../Assets',
+	'URLpath4FileManagedDirTree' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__)
+	//'URLpath4thumbnails' => 'Files/Thumbnails/',
+	'URLpath4assets' => '../Assets',
 	'chmod' => 0777,
 	//'maxUploadSize' => 1024 * 1024 * 5,
 	//'upload' => false,
@@ -300,7 +300,7 @@ foreach ($test as $tc)
 
 ?>
 
-	<h3>URI to abs &amp; file path transform for options['directory'] based URIs</h3>
+	<h3>URI to abs &amp; file path transform for options['URLpath4FileManagedDirTree'] based URIs</h3>
 
 <?php
 
@@ -316,7 +316,7 @@ foreach ($test as $tc)
 
 	try
 	{
-		$r3 = $settings['directory'] . $t;
+		$r3 = $settings['URLpath4FileManagedDirTree'] . $t;
 		$r5 = $browser->normalize($r3);
 		$r4 = $browser->url_path2file_path($r3);
 		$r1 = $browser->rel2abs_legal_url_path($t);

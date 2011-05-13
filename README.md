@@ -53,7 +53,7 @@ How to use
 
       var myFileManager = new FileManager({
         url: 'path/to/the/manager.php',
-        assetBasePath: '../Assets'
+        URLpath4assets: '../Assets'
       });
       myFileManager.show();
 
@@ -62,7 +62,7 @@ How to use
 Options
 
 * url: (string) The base url to a file with an instance of the FileManager php class (FileManager.php), without QueryString
-* assetBasePath: (string) The path to all images and swf files used by the filemanager
+* URLpath4assets: (string) The path to all images and swf files used by the filemanager
 * directory: (string, relative to the directory set in to the filemanager php class) Can be used to load a subfolder instead of the base folder
 * language: (string, defaults to *en*) The language used for the FileManager
 * selectable: (boolean, defaults to *false*) If true, provides a button to select a file

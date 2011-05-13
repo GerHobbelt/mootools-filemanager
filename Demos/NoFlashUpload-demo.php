@@ -48,7 +48,7 @@ session_write_close();
 				url: 'manager.php',
 				language: 'en',
 				hideOnClick: true,
-				assetBasePath: '../Assets',
+				URLpath4assets: '../Assets',
 				// uploadAuthData is deprecated; use propagateData instead. The session cookie(s) are passed through Flash automatically, these days...
 				//
 				// and a couple of extra user defined parameters sent with EVERY request:

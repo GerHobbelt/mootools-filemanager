@@ -61,9 +61,9 @@ if (!session_start()) die('session_start() failed');
 
 
 $browser = new FileManagerWithAliasSupport(array(
-	'directory' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__)
-	//'thumbnailPath' => 'Files/Thumbnails/',
-	'assetBasePath' => '../Assets',
+	'URLpath4FileManagedDirTree' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__)
+	//'URLpath4thumbnails' => 'Files/Thumbnails/',
+	'URLpath4assets' => '../Assets',
 	'chmod' => 0777,
 	//'maxUploadSize' => 1024 * 1024 * 5,
 	//'upload' => false,

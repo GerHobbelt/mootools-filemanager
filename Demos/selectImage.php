@@ -14,7 +14,7 @@ require('FM-common.php');  // this one loads the appropriate FileManager AND the
 
 /*
  * when you want to pass absolute paths into FileManager, be reminded that ALL paths
- * (except for the [mimeTypesPath] one!) are paths in URI space, i.e. the 'root'
+ * (except for the [FileSystemPath4mimeTypesMapFile] one!) are paths in URI space, i.e. the 'root'
  * is assumed to be DocumentRoot.
  *
  * Below is a quick example how a physical filesystem path /could/ be transformed
@@ -35,9 +35,9 @@ $fm_basedir = str_replace(strtr($_SERVER['DOCUMENT_ROOT'], '\\', '/'), '', dirna
  * mkNewFileManager() is just a wrapper used to keep the demo code lean...
  */
 $browser = mkNewFileManager(array(
-	//'directory' => $fm_basedir . 'Files/',   // absolute paths: as the relative ones, they sit in URI space, i.e. assume DocumentRoot is root '/'
+	//'URLpath4FileManagedDirTree' => $fm_basedir . 'Files/',   // absolute paths: as the relative ones, they sit in URI space, i.e. assume DocumentRoot is root '/'
 
-	'directory' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__) or rather: $_SERVER['SCRIPT_NAME']
+	'URLpath4FileManagedDirTree' => 'Files/',                   // relative paths: are relative to the URI request script path, i.e. dirname(__FILE__) or rather: $_SERVER['SCRIPT_NAME']
 
 	'filter' => 'image/',
 	'upload' => true,

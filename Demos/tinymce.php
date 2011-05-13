@@ -90,7 +90,7 @@ session_write_close();
 
 				return {
 					url: 'manager.php?exhibit=A', // 'manager.php', but with a bogus query parameter included: latest FM can cope with such an URI
-					assetBasePath: '../Assets', // '/c/lib/includes/js/mootools-filemanager/Assets',
+					URLpath4assets: '../Assets', // '/c/lib/includes/js/mootools-filemanager/Assets',
 					language: 'en',
 					selectable: true,
 					destroy: true,
