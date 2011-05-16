@@ -97,6 +97,7 @@ var FileManager = new Class({
 		listPaginationAvgWaitTime: 2000,  // adaptive pagination: strive to, on average, not spend more than this on rendering a directory chunk
 
 		standalone: true,                 // (boolean). Default to true. If set to false, returns the Filemanager without enclosing window / overlay.
+		advancedEffects: true,			  // (boolean). Default to true. Fading effect on panels. Slow when large thumbs dir.
 		parentContainer: null,            // (string). ID of the parent container. If not set, FM will consider its first container parent for fitSizes();
 		propagateData: {},                // extra query parameters sent with every request to the backend
 		verbose: false,
@@ -2545,7 +2546,10 @@ var FileManager = new Class({
 		duration = new Date().getTime() - starttime;
 		//this.diag.log(' + time taken in array traversal + revert = ', duration);
 
-		if (support_DnD_for_this_dir) {
+		if (support_DnD_for_this_dir)
+		{
+			var self = this;
+			
 			// -> make draggable
 			$$(els[0]).makeDraggable({
 				droppables: $$(this.droppables.combine(els[1])),
@@ -2558,20 +2562,20 @@ var FileManager = new Class({
 
 					el.setStyles({
 						display: 'block',
-						left: e.page.x + dpos.x,
-						top: e.page.y + dpos.y
+						left: e.page.x - dpos.x + 12,
+						top: e.page.y - dpos.y + 10
 					});
 
 					this.imageadd.setStyles({
-						'left': e.page.x + dpos.x - 12,
-						'top': e.page.y + dpos.y + 2
+						'left': e.page.x - dpos.x,
+						'top': e.page.y - dpos.y + 12
 					});
 				}).bind(this),
 
 				onBeforeStart: (function(el) {
 					// you CANNOT use .container to get good x/y coords as in standalone mode, this <div> has a bogus position;
-					//var cpos = this.container.getPosition();
-
+					el.store('delta_pos', self.container.getPosition());
+					
 					// start the scroller
 					this.scroller.start();
 				}).bind(this),
@@ -2598,10 +2602,13 @@ var FileManager = new Class({
 					this.tips.hide();
 
 					var position = el.getPosition();
+					var dpos = el.retrieve('delta_pos');
+					/*
 					var dpos = {
 						x: position.x - e.page.x,
 						y: position.y - e.page.y
 					};
+					*/
 					/*
 					 * Use the element size (Y) for IE-fixing heuristics:
 					 * in IE the mouse is already quite some distance away before the onStart fires,
@@ -2609,22 +2616,23 @@ var FileManager = new Class({
 					 * that it will reside 'under the mouse cursor'.
 					 */
 					var elsize = el.getSize();
+/*
 					if (dpos.y > 0)
 						dpos.y = -Math.round(elsize.y / 2);
 					else if (dpos.y < -elsize.y)
 						dpos.y = -Math.round(elsize.y / 2);
-
+*/
 					this.diag.log('~~~ positions at start: ', position, dpos, e);
 
-					el.store('delta_pos', dpos);
+//					el.store('delta_pos', dpos);
 
 					el.addClass('drag').setStyles({
 						'z-index': this.options.zIndex + 1500,
 						'position': 'absolute',
 						'width': el.getWidth() - el.getStyle('paddingLeft').toInt() - el.getStyle('paddingRight').toInt(),
 						'display': 'none',
-						'left': e.page.x + dpos.x,
-						'top': e.page.y + dpos.y
+						'left': e.page.x - dpos.x,
+						'top': e.page.y - dpos.y
 					}).inject(this.container);
 
 					el.fade(0.7).addClass('move');
