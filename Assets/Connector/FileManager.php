@@ -1002,7 +1002,7 @@ class FileManager
 			'URLpath4thumbnails' => null,                                               // may sit outside options['URLpath4FileManagedDirTree'] but MUST be in the DocumentRoot tree
 			'thumbSmallSize' => 48,                                                     // Used for thumb48 creation
 			'thumbBigSize' => 250,                                                      // Used for thumb250 creation
-			'FileSystemPath4mimeTypesMapFile' => strtr(dirname(__FILE__), '\\', '/') . '/MimeTypes.ini',  // an absolute filesystem path anywhere; when relative, it will be assumed to be against options['URIpath4RequestScript']
+			'FileSystemPath4mimeTypesMapFile' => strtr(dirname(__FILE__), '\\', '/') . '/Filemanager/MimeTypes.ini',  // an absolute filesystem path anywhere; when relative, it will be assumed to be against options['URIpath4RequestScript']
 			'FileSystemPath4SiteDocumentRoot' => null,                                  // an absolute filesystem path pointing at URI path '/'. Default: SERVER['DOCUMENT_ROOT']
 			'URIpath4RequestScript' => null,                                            // default is $_SERVER['SCRIPT_NAME']
 			'dateFormat' => 'j M Y - H:i',
@@ -2990,6 +2990,8 @@ class FileManager
 				switch ($mime_els[1])
 				{
 				case 'directory':
+					$content = '<dl>';
+					
 					$preview_HTML = '';
 					break;
 
