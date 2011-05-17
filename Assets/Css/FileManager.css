@@ -214,6 +214,7 @@ div.filemanager div.filemanager-browsercontainer {
 	min-width: 189px;
 	border: 0;
 	border-right: 1px solid #bebebe;
+	/* background: #DEE6F0 url("../Images/filelist.png") repeat-x bottom left; */
 	background: #D7DEE8 url("../Images/filelist.png") repeat-x bottom left;
 	overflow: hidden;
 
