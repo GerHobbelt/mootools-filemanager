@@ -366,7 +366,7 @@ div.filemanager-container span.thumb {
 }
 
 div.filemanager-container span.fi.hover {
-	background: #E2EBF6;
+	background: #F3F7FC;                    /* #E2EBF6; -- is not very visible in the top part of the left panel, so brightened it a bit */
 }
 
 div.filemanager-container span.fi span,
