@@ -205,6 +205,7 @@ if (0)
 				move_or_copy: true,
 				createFolders: true,
 				onComplete: complete,
+				hideOnSelect: false,
 				// and a couple of extra user defined parameters sent with EVERY request:
 				propagateData: {
 					origin: 'demo-selectFile'

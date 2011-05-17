@@ -749,7 +749,7 @@ var FileManager = new Class({
 	},
 
 	// -> catch a click on an element in the file/folder browser
-	relayClick: function(e, el) {
+	relayClickOnItemInLeftPanel: function(e, el) {
 		if (e) e.stop();
 
 		// ignore mouse clicks while drag&drop + resulting copy/move is pending.
@@ -765,7 +765,7 @@ var FileManager = new Class({
 			this.storeHistory = true;
 
 			var file = el.retrieve('file');
-			this.diag.log('on relayClick file = ', file, ', current directory: ', this.CurrentDir, '@ el = ', el);
+			this.diag.log('on relayClickOnItemInLeftPanel file = ', file, ', current directory: ', this.CurrentDir, '@ el = ', el);
 			if (el.retrieve('edit')) {
 				el.eliminate('edit');
 				return;
@@ -797,16 +797,14 @@ var FileManager = new Class({
 		}
 	},
 
-// Partikule
-
 	/**
 	 * Catches both single and double click on thumb list icon in the directory preview thumb/gallery list
 	 */
-	relayDblClick: function(e, self, dg_el, file, clicks)
+	relaySingleOrDoubleClick: function(e, self, dg_el, file, clicks)
 	{
 		if (e) e.stop();
 
-		this.diag.log('on relayDblClick file = ', file, ', current dir: ', this.CurrentDir, ', # clicks: ', clicks);
+		this.diag.log('on relaySingleOrDoubleClick file = ', file, ', current dir: ', this.CurrentDir, ', # clicks: ', clicks);
 
 		this.tips.hide();
 
@@ -818,9 +816,6 @@ var FileManager = new Class({
 		}
 
 		this.Current = el_ref.addClass('selected');
-		file = el_ref.retrieve('file');
-
-		this.CurrentFile = file;
 
 		// now make sure we can see the selected item in the left pane: scroll there:
 		this.browserSelection('none');
@@ -833,11 +828,9 @@ var FileManager = new Class({
 		else
 		{
 			// the single-click action is to simulate a click on the corresponding line in the directory view (left pane)
-			this.relayClick(e, el_ref);
+			this.relayClickOnItemInLeftPanel(e, el_ref);
 		}
 	},
-
-// /Partikule
 
 	toggleList: function(e) {
 		if (e) e.stop();
@@ -1568,6 +1561,11 @@ var FileManager = new Class({
 			if (csel != null)
 				csel.removeClass('selected');
 		}
+		else if (direction === 'none')
+		{
+			// select the current item (don't look for selected / hover classes to find out who is selected)
+			current = this.Current;
+		}
 		else if (this.browser.getElement('span.fi.hover') == null && this.browser.getElement('span.fi.selected') == null)
 		{
 			// none is selected: select first item (folder/file)
@@ -1589,7 +1587,7 @@ var FileManager = new Class({
 			span.removeClass('hover');
 		});
 
-		var stepsize = 1, next, currentFile;
+		var stepsize = 1, next, file;
 
 		switch (direction) {
 		// go down
@@ -1690,13 +1688,13 @@ var FileManager = new Class({
 				csel.removeClass('selected');
 
 			current.addClass('selected');
-			currentFile = current.retrieve('file');
-			this.diag.log('on key ENTER file = ', currentFile);
-			if (currentFile.mime === 'text/directory') {
-				this.load(currentFile.dir + currentFile.name /*.replace(this.root,'')*/);
+			file = current.retrieve('file');
+			this.diag.log('on key ENTER file = ', file);
+			if (file.mime === 'text/directory') {
+				this.load(file.path);
 			}
 			else {
-				this.fillInfo(currentFile);
+				this.fillInfo(file);
 			}
 			break;
 
@@ -1719,9 +1717,9 @@ var FileManager = new Class({
 				next.addClass('hover');
 			}
 
-			currentFile = current.retrieve('file');
-			this.diag.log('on key DELETE file = ', currentFile);
-			this.destroy(currentFile);
+			file = current.retrieve('file');
+			this.diag.log('on key DELETE file = ', file);
+			this.destroy(file);
 
 			current = next;
 			this.Current = current;
@@ -2212,7 +2210,7 @@ var FileManager = new Class({
 			el.addEvent('click', (function(e) {
 				self.diag.log('is_dir:CLICK: ', e);
 				var node = this;
-				self.relayClick.apply(self, [e, node]);
+				self.relayClickOnItemInLeftPanel.apply(self, [e, node]);
 			}).bind(el));
 
 			editButtons = [];
@@ -2435,7 +2433,7 @@ var FileManager = new Class({
 					el.addEvent('click', (function(e) {
 						self.diag.log('is_file:CLICK: ', e);
 						var node = this;
-						self.relayClick.apply(self, [e, node]);
+						self.relayClickOnItemInLeftPanel.apply(self, [e, node]);
 					}).bind(el));
 				}
 
@@ -2504,12 +2502,12 @@ var FileManager = new Class({
 						'click': function(e)
 						{
 							clearTimeout(self.dir_gallery_click_timer);
-							self.dir_gallery_click_timer = self.relayDblClick.delay(700, self, [e, this, dg_el, file, 1]);
+							self.dir_gallery_click_timer = self.relaySingleOrDoubleClick.delay(700, self, [e, this, dg_el, file, 1]);
 						},
 						'dblclick': function(e)
 						{
 							clearTimeout(self.dir_gallery_click_timer);
-							self.dir_gallery_click_timer = self.relayDblClick.delay(0, self, [e, this, dg_el, file, 2]);
+							self.dir_gallery_click_timer = self.relaySingleOrDoubleClick.delay(0, self, [e, this, dg_el, file, 2]);
 						}
 					});
 
@@ -2552,7 +2550,7 @@ var FileManager = new Class({
 		if (support_DnD_for_this_dir)
 		{
 			var self = this;
-			
+
 			// -> make draggable
 			$$(els[0]).makeDraggable({
 				droppables: $$(this.droppables.combine(els[1])),
@@ -2578,7 +2576,7 @@ var FileManager = new Class({
 				onBeforeStart: (function(el) {
 					// you CANNOT use .container to get good x/y coords as in standalone mode, this <div> has a bogus position;
 					el.store('delta_pos', self.container.getPosition());
-					
+
 					// start the scroller
 					this.scroller.start();
 				}).bind(this),
@@ -2597,7 +2595,7 @@ var FileManager = new Class({
 					 * So we then manually fire the 'click' event. See also the comment near the 'click' event handler registration in fill_chunkwise_1()
 					 * about the different behaviour in different browsers.
 					 */
-					this.relayClick(null, el);
+					this.relayClickOnItemInLeftPanel(null, el);
 				}).bind(this),
 
 				onStart: (function(el, e) {
