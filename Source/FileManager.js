@@ -1400,12 +1400,15 @@ var FileManager = new Class({
 				// remove entry from cached JSON directory list and remove the item from the view.
 				// This is particularly important when working on a paginated directory and afterwards the pages are jumped back & forth:
 				// the next time around, this item should NOT appear in the list anymore!
+				//
+				// Also, this call will clear the detail pane view if the deleted file is shown over there.
 				this.deselect(file.element);
 
 				var rerendering_list = false;
 				if (this.view_fill_json)
 				{
-					this.delete_from_dircache(file);  /* do NOT use j.name, as that one can be 'cleaned up' as part of the 'move' operation! */
+					/* There is no j.name output, so use the original file.name! */
+					this.delete_from_dircache(file);
 
 					// minor caveat: when we paginate the directory list, then browsing to the next page will skip one item (which would
 					// have been the first on the next page). The brute-force fix for this is to force a re-render of the page when in
@@ -2718,7 +2721,8 @@ var FileManager = new Class({
 
 								if (this.view_fill_json)
 								{
-									this.delete_from_dircache(file);  /* do NOT use j.name, as that one can be 'cleaned up' as part of the 'move' operation! */
+									/* do NOT use the resulting j.name, as that one can be 'cleaned up' as part of the 'move' operation! */
+									this.delete_from_dircache(file);
 
 									// minor caveat: when we paginate the directory list, then browsing to the next page will skip one item (which would
 									// have been the first on the next page). The brute-force fix for this is to force a re-render of the page when in
