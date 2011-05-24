@@ -776,11 +776,12 @@ div.filemanager-preview div.object {
 	overflow: hidden;
 }
 
-div.filemanager-container img.browser-add {
+div.filemanager-container img.browser-dragstate {
+	background: url("../Images/drag_iconset.png") 0 0 no-repeat;
 	position: absolute;
 	width: 16px;
 	height: 16px;
-	/* z-index: 2000; */
+	display: none; /* JavaScript will change this to 'block' when thse user drags an item */
 }
 
 /* UPLOAD */

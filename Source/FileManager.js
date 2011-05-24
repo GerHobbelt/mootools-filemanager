@@ -273,15 +273,13 @@ var FileManager = new Class({
 		}).bind(this));
 		this.header.adopt(this.pathTitle,this.clickablePath);
 
-// Partikule
-// Because the header is positioned -30px before the container, we hide it for the moment if the FM isn't standalone.
-// Need to think about a better integration
+		// Because the header is positioned -30px before the container, we hide it for the moment if the FM isn't standalone.
+		// Need to think about a better integration
 		if (!this.options.standalone)
 		{
 			this.header.hide();
 			this.filemanager.setStyle('width', '100%');
 		}
-// /Partikule
 
 		var self = this;
 
@@ -289,73 +287,8 @@ var FileManager = new Class({
 		this.browserheader = new Element('div',{'class': 'filemanager-browserheader'}).inject(this.browsercontainer);
 		this.browserheader.adopt(this.browserLoader);
 		this.browserScroll = new Element('div', {'class': 'filemanager-browserscroll'}).inject(this.browsercontainer).addEvents({
-			'mouseover': (function(e) {
-					this.diag.log('browserScroll.mouseover: ', e);
-
-					// sync mouse and keyboard-driven browsing: the keyboard requires that we keep track of the hovered item,
-					// so we cannot simply leave it to a :hover CSS style. Instead, we find out which element is currently
-					// hovered:
-					var row = null;
-					if (e.target)
-					{
-						row = (e.target.hasClass('fi') ? e.target : e.target.getParent('span.fi'));
-						if (row)
-						{
-							row.addClass('hover');
-						}
-					}
-					this.browser.getElements('span.fi.hover').each(function(span) {
-						// prevent screen flicker: only remove the class for /other/ nodes:
-						if (span != row) {
-							span.removeClass('hover');
-							var rowicons = span.getElements('img.browser-icon');
-							if (rowicons)
-							{
-								rowicons.each(function(icon) {
-									icon.set('tween', {duration: 'short'}).fade(0);
-								});
-							}
-						}
-					});
-
-					if  (row)
-					{
-						var icons = row.getElements('img.browser-icon');
-						if (icons)
-						{
-							icons.each(function(icon) {
-								if (e.target == icon)
-								{
-									icon.set('tween', {duration: 'short'}).fade(1);
-								}
-								else
-								{
-									icon.set('tween', {duration: 'short'}).fade(0.5);
-								}
-							});
-						}
-					}
-				}).bind(this),
-
-			'mouseleave': (function(e) {
-					this.diag.log('browserScroll.mouseleave: ', e);
-
-					// only bother us when the mouse cursor has just left the browser area; anything inside there is handled
-					// by the recurring 'mouseover' event above...
-					//
-					// - do NOT remove the 'hover' marker from the row; it will be used by the keyboard!
-					// - DO fade out the action icons, though!
-					this.browser.getElements('span.fi.hover').each(function(span) {
-						var rowicons = span.getElements('img.browser-icon');
-						if (rowicons)
-						{
-							rowicons.each(function(icon) {
-								icon.set('tween', {duration: 'short'}).fade(0);
-							});
-						}
-					});
-
-				}).bind(this)
+				'mouseover': this.mouseOver4browserScroll.bind(this),
+				'mouseleave': this.mouseLeave4browserScroll.bind(this)
 			});
 		this.browserMenu_thumb = new Element('a',{
 				'id':'toggle_side_boxes',
@@ -513,9 +446,9 @@ var FileManager = new Class({
 				opacity: 0.5,
 				title: this.language.close,
 				events: {click: this.hide.bind(this)}
-			}).inject(this.filemanager).addEvent('mouseover',function() {
+			}).inject(this.filemanager).addEvent('mouseenter',function() {
 					this.fade(1);
-				}).addEvent('mouseout',function() {
+				}).addEvent('mouseleave',function() {
 					this.fade(0.5);
 				});
 		}
@@ -539,13 +472,51 @@ var FileManager = new Class({
 			this.tips.attach(this.closeIcon);
 		}
 
-		this.imageadd = Asset.image(this.URLpath4assets + 'Images/add.png', {
-			'class': 'browser-add',
+		this.imagedragstate = Asset.image(this.URLpath4assets + 'Images/transparent.gif', {
+			'class': 'browser-dragstate',
 			styles:
 			{
 				'z-index': this.options.zIndex + 1600
 			}
-		}).set('opacity', 0).set('tween', {duration: 'short'}).inject(this.container);
+		}).inject(this.container);
+		this.imagedragstate.changeState = function(new_state)
+		{
+			/* 'this' points at this.imagedragstate in here! */
+			if (new_state !== this.current_state)
+			{
+				switch (new_state)
+				{
+				default:
+					this.setStyles({
+						'background-position': '0px 0px',
+						'display': 'none'
+					});
+					break;
+
+				case 1: // move
+					this.setStyles({
+						'background-position': '0px -16px',
+						'display': 'block'
+					});
+					break;
+
+				case 2: // copy
+					this.setStyles({
+						'background-position': '0px -32px',
+						'display': 'block'
+					});
+					break;
+
+				case 3: // cannot drop here...
+					this.setStyles({
+						'background-position': '0px -48px',
+						'display': 'block'
+					});
+					break;
+				}
+				this.current_state = new_state;
+			}
+		};
 
 		if (!this.options.hideOverlay) {
 			this.overlay = new Overlay(Object.append((this.options.hideOnClick ? {
@@ -571,8 +542,8 @@ var FileManager = new Class({
 				{
 					if (this.drag_is_active && !this.ctrl_key_pressed)
 					{
-						// only init the fade when actually switching CONTROL key states!
-						this.imageadd.fade(1);
+						// only init the change when actually switching CONTROL key states!
+						this.imagedragstate.changeState(2);
 					}
 					this.ctrl_key_pressed = true;
 				}
@@ -585,8 +556,8 @@ var FileManager = new Class({
 				{
 					if (/* this.drag_is_active && */ this.ctrl_key_pressed)
 					{
-						// only init the fade when actually switching CONTROL key states!
-						this.imageadd.fade(0);
+						// only init the change when actually switching CONTROL key states!
+						this.imagedragstate.changeState(1);
 					}
 					this.ctrl_key_pressed = false;
 				}
@@ -674,6 +645,85 @@ var FileManager = new Class({
 			return true;
 
 		return (j.dirs.length + j.files.length <= pagesize * 4);
+	},
+
+	mouseOver4browserScroll: function(e) {
+		this.diag.log('browserScroll.mouseover: ', e);
+
+		// see comment at the drag&drop section further below about the 'mouseleave' / 'mouseover' trouble due to the dragged element:
+		// here we make sure we don't 'track' the element hover while a drag&drop is in progress:
+		if (this.drag_is_active) {
+			return;
+		}
+
+		// sync mouse and keyboard-driven browsing: the keyboard requires that we keep track of the hovered item,
+		// so we cannot simply leave it to a :hover CSS style. Instead, we find out which element is currently
+		// hovered:
+		var row = null;
+		if (e.target)
+		{
+			row = (e.target.hasClass('fi') ? e.target : e.target.getParent('span.fi'));
+			if (row)
+			{
+				row.addClass('hover');
+			}
+		}
+		this.browser.getElements('span.fi.hover').each(function(span) {
+			// prevent screen flicker: only remove the class for /other/ nodes:
+			if (span != row) {
+				span.removeClass('hover');
+				var rowicons = span.getElements('img.browser-icon');
+				if (rowicons)
+				{
+					rowicons.each(function(icon) {
+						icon.set('tween', {duration: 'short'}).fade(0);
+					});
+				}
+			}
+		});
+
+		if  (row)
+		{
+			var icons = row.getElements('img.browser-icon');
+			if (icons)
+			{
+				icons.each(function(icon) {
+					if (e.target == icon)
+					{
+						icon.set('tween', {duration: 'short'}).fade(1);
+					}
+					else
+					{
+						icon.set('tween', {duration: 'short'}).fade(0.5);
+					}
+				});
+			}
+		}
+	},
+
+	mouseLeave4browserScroll: function(e) {
+		this.diag.log('browserScroll.mouseleave: ', e);
+
+		// see comment at the drag&drop section further below about the 'mouseleave' / 'mouseover' trouble due to the dragged element:
+		// here we make sure we don't 'track' the element hover while a drag&drop is in progress:
+		if (this.drag_is_active) {
+			return;
+		}
+
+		// only bother us when the mouse cursor has just left the browser area; anything inside there is handled
+		// by the recurring 'mouseover' event above...
+		//
+		// - do NOT remove the 'hover' marker from the row; it will be used by the keyboard!
+		// - DO fade out the action icons, though!
+		this.browser.getElements('span.fi.hover').each(function(span) {
+			var rowicons = span.getElements('img.browser-icon');
+			if (rowicons)
+			{
+				rowicons.each(function(icon) {
+					icon.set('tween', {duration: 'short'}).fade(0);
+				});
+			}
+		});
 	},
 
 	/*
@@ -1763,7 +1813,7 @@ var FileManager = new Class({
 
 		this.diag.log('DISABLE keyboard up/down on revert');
 		this.drag_is_active = false;
-		this.imageadd.fade(0);
+		this.imagedragstate.changeState(0);
 	},
 
 	// clicked 'first' button in the paged list/thumb view:
@@ -2540,31 +2590,100 @@ var FileManager = new Class({
 
 			// -> make draggable
 			$$(els[0]).makeDraggable({
-				droppables: $$(this.droppables.combine(els[1])),
+				// .droppables: the outer UL should be the first droppable as it should be considered as being 'below' the other droppables:
+				droppables: $$(this.droppables.include(this.browserScroll).combine(els[1])),
 				//stopPropagation: true,
+				//preventDefault: true,
 
 				// We position the element relative to its original position; this ensures the drag always works with arbitrary container.
 				onDrag: (function(el, e)
 				{
 					var dpos = el.retrieve('delta_pos');
+					if (this.browserScroll.contains(el)) this.diag.log('~~~ positions while dragging: ', dpos, e, 1 * this.browserScroll.contains(el));
 
 					el.setStyles({
 						display: 'block',
-						left: e.page.x - dpos.x + 12,
-						top: e.page.y - dpos.y + 10
+						left: dpos.x + e.page.x - dpos.mouse_start.x,
+						top: dpos.y + e.page.y - dpos.mouse_start.y
 					});
 
-					this.imageadd.setStyles({
-						'left': e.page.x - dpos.x,
-						'top': e.page.y - dpos.y + 12
+					this.imagedragstate.setStyles({
+						'left': dpos.x + e.page.x - dpos.mouse_start.x - 12,
+						'top': dpos.y + e.page.y - dpos.mouse_start.y + 2
 					});
+
+					// see comment below about the 'mouseleave' / 'mouseover' trouble due to the dragged element:
+					// here we invoke the scroller processor code manually to make the scroller work as expected.
+					this.scroller.getCoords(e);
+
 				}).bind(this),
 
 				onBeforeStart: (function(el) {
-					// you CANNOT use .container to get good x/y coords as in standalone mode, this <div> has a bogus position;
-					el.store('delta_pos', self.container.getPosition());
+					/*
+					 * you CANNOT use .container to get good x/y coords as in standalone mode that <div> has a bogus position.
+					 * Instead, we simply monitor the mouse coordinates from the very beginning and adjust the element positioning
+					 * based on the change of those.
+					 */
+					var dpos = el.getPosition();
 
-					// start the scroller
+					/*
+					 * Because the (abs.pos.) dragged item is located under the mouse, dragging behaviour may be fine, but the 'mouseleave'
+					 * event for the this.browserScroll element AND the this.scroller behaviour are erratic.
+					 *
+					 * The reason is that when you move the mouse sufficiently, the mouse will temporarily move 'out' of the
+					 * area occupied by the high z-index-ed dragged element, then the dragged element is repositioned in onDrag
+					 * and consequently the browser will see a 'mouseleave' as the mouse now 'moves' from inside to outside the
+					 * surface occupied by the this.browserScroll OR ITS CHILDREN: the dragged element is not considered to be
+					 * 'inside' the this.browserScroll DOM tree:
+					 *    this.browserScroll.contains(el) == false
+					 * Hence we'll need to add an extra check in the 'mouseleave' handler above.
+					 *
+					 * If you do NOT move the mouse 'sufficiently', then the mouse will be considered to float over the absolute
+					 * positioned element which is being dragged and no 'mouseover' / 'mouseleave' will fire for this.browserScroll
+					 * as the dragged element is not considered to be contained by it.
+					 *
+					 * Furthermore, due to this apparent 'mouse moving out/into area over the dragged element', the 'mouseleave'
+					 * event for the this.scroller will fire quite quickly while you drag the mouse, causing the this.scroller
+					 * effect to STOP WORKING within the second you started it by starting to drag.
+					 * The only way out of THIS conundrum is to invoke the mouse movement checking code of the this.scroller
+					 * MANUALLY from our onDrag to ensure that the Scroller performs smoothly.
+					 *
+					 * So you want proof?
+					 * Remove the line in onDrag which says:
+					 *     	this.scroller.getCoords(e);
+					 * and disable the two mouseover/mouseleave handler code sections in the initializer where this.browserScroll is
+					 * set up:
+					 *		if (this.drag_is_active) {
+					 *			return;
+					 *		}
+					 * e.g. by commenting out the 'return' statement in there.
+					 *
+					 * Next, go drag&drop on a few machines and see some 'jumpy' and inconsistent behaviour.
+					 *
+					 * Next, add this line here to shift the dragged element down by 50 pixels so it's out of the way and NOT under
+					 * the mouse, then run the test again: see a smooth behaviour for the scroller and everything else:
+					 *		dpos.y += 50;
+					 *
+					 * Since we want that smooth behaviour while the dragged element remains under the mouse, we had to make the
+					 * changes listed above.
+					 */
+					//dpos.y += 50;
+
+					// fetch this Drag.Move instance:
+					var dragger = el.retrieve('dragger');
+					var mouse_start = dragger.mouse.start;	// contains the event.page.x/y values
+					/*
+					 * Right now, we can be sure the mouse is positioned over the element that MAY be dragged;
+					 * by the time we get the START event we can be sure it's already away and dragging, hence
+					 * any positioning done by then will be off by an arbitrary amount (depending on the dragging
+					 * speed of the user)
+					 */
+					dpos.mouse_start = mouse_start;
+					el.store('delta_pos', dpos);
+					this.diag.log('~~~ positions before start: ', dpos, this.container.getPosition(), el.getPosition(), this.browsercontainer.getPosition(), 1 * this.browserScroll.contains(el));
+
+					// start the scroller; sensitive areas are top and bottom 20% of the total height:
+					this.scroller.options.area = this.browserScroll.getSize().y * 0.2;
 					this.scroller.start();
 				}).bind(this),
 
@@ -2591,36 +2710,15 @@ var FileManager = new Class({
 
 					var position = el.getPosition();
 					var dpos = el.retrieve('delta_pos');
-					/*
-					var dpos = {
-						x: position.x - e.page.x,
-						y: position.y - e.page.y
-					};
-					*/
-					/*
-					 * Use the element size (Y) for IE-fixing heuristics:
-					 * in IE the mouse is already quite some distance away before the onStart fires,
-					 * we need to restrict the vertical position of the dragged element in such a way
-					 * that it will reside 'under the mouse cursor'.
-					 */
-					var elsize = el.getSize();
-/*
-					if (dpos.y > 0)
-						dpos.y = -Math.round(elsize.y / 2);
-					else if (dpos.y < -elsize.y)
-						dpos.y = -Math.round(elsize.y / 2);
-*/
-					this.diag.log('~~~ positions at start: ', position, dpos, e);
-
-//					el.store('delta_pos', dpos);
+					this.diag.log('~~~ positions at start: ', position, dpos, e, 1 * this.browserScroll.contains(el));
 
 					el.addClass('drag').setStyles({
 						'z-index': this.options.zIndex + 1500,
 						'position': 'absolute',
 						'width': el.getWidth() - el.getStyle('paddingLeft').toInt() - el.getStyle('paddingRight').toInt(),
 						'display': 'none',
-						'left': e.page.x - dpos.x,
-						'top': e.page.y - dpos.y
+						'left': dpos.x + e.page.x - dpos.mouse_start.x,
+						'top': dpos.y + e.page.y - dpos.mouse_start.y
 					}).inject(this.container);
 
 					el.fade(0.7).addClass('move');
@@ -2630,16 +2728,22 @@ var FileManager = new Class({
 					// FIX wrong visual when CONTROL key is kept depressed between drag&drops: the old code discarded the relevant keyboard handler; we simply switch visuals but keep the keyboard handler active.
 					// This state change will be reverted in revert_drag_n_drop().
 					this.drag_is_active = true;
-					this.imageadd.fade(0 + this.ctrl_key_pressed);
+
+					this.imagedragstate.setStyles({
+						'left': dpos.x + e.page.x - dpos.mouse_start.x - 12,
+						'top': dpos.y + e.page.y - dpos.mouse_start.y + 2
+					}).changeState(1 + this.ctrl_key_pressed);
 				}).bind(this),
 
-				onEnter: function(el, droppable) {
+				onEnter: (function(el, droppable) {
 					droppable.addClass('droppable');
-				},
+					this.imagedragstate.changeState(1 + this.ctrl_key_pressed);
+				}).bind(this),
 
-				onLeave: function(el, droppable) {
+				onLeave: (function(el, droppable) {
 					droppable.removeClass('droppable');
-				},
+					this.imagedragstate.changeState(3);
+				}).bind(this),
 
 				onDrop: (function(el, droppable, e) {
 					this.diag.log('draggable:onDrop', el, droppable, e);
@@ -2665,11 +2769,11 @@ var FileManager = new Class({
 							return;
 						}
 
-						dir = droppable.retrieve('file');
+						dir = droppable.retrieve('file');	// will deliver NULL when the droppable equals this.browser.
 						this.diag.log('on drop dir = ', dir);
 					}
 
-					if ((!this.options.move_or_copy) || (is_a_move && !droppable)) {
+					if ((!this.options.move_or_copy) || (is_a_move && !dir)) {
 						this.drop_pending = 0;
 
 						this.revert_drag_n_drop(el);   // go and request the details anew, then refresh them in the view
@@ -2679,7 +2783,7 @@ var FileManager = new Class({
 					this.revert_drag_n_drop(el);       // do not send the 'detail' request in here: this.drop_pending takes care of that!
 
 					var file = el.retrieve('file');
-					this.diag.log('on drop file = ', file, ', current dir:', this.CurrentDir, ', droppable: ', droppable);
+					this.diag.log('on drop file = ', file, ', current dir:', this.CurrentDir, ', droppable: ', droppable, ', dir: ', dir);
 
 					if (this.Request) this.Request.cancel();
 
@@ -3109,11 +3213,17 @@ var FileManager = new Class({
 
 		$(appearOn).addEvents({
 			mouseenter: (function() {
-							this.set('opacity', opacity[0]);
-						}).bind(icon),
+							// see comment at the drag&drop section further above about the 'mouseleave' / 'mouseover' trouble due to the dragged element:
+							// here we make sure we don't 'track' the element hover while a drag&drop is in progress:
+							if (this.drag_is_active) {
+								return;
+							}
+
+							icon.set('opacity', opacity[0]);
+						}).bind(this),
 			mouseleave: (function() {
-							this.set('opacity', opacity[1]);
-						}).bind(icon)
+							icon.set('opacity', opacity[1]);
+						}).bind(this)
 		});
 		return icon;
 	},

@@ -24,7 +24,7 @@ FileManager.Gallery = new Class({
 
 	options:
 	{
-		closeCaptionEditorOnMouseOut: true  // TRUE: will save & close caption editor popup dialog when you move the mouse out there
+		closeCaptionEditorOnMouseLeave: true  // TRUE: will save & close caption editor popup dialog when you move the mouse out there
 	},
 
 	hooks: {
@@ -110,7 +110,7 @@ FileManager.Gallery = new Class({
 			opacity: 0,
 			events: {
 				mouseenter: function() {
-					if (self.options.closeCaptionEditorOnMouseOut)
+					if (self.options.closeCaptionEditorOnMouseLeave)
 					{
 						clearTimeout(timer);
 					}
@@ -118,7 +118,7 @@ FileManager.Gallery = new Class({
 				mouseleave: function(e) {
 					var target = this;
 
-					if (self.options.closeCaptionEditorOnMouseOut)
+					if (self.options.closeCaptionEditorOnMouseLeave)
 					{
 						timer = (function() {
 							self.removeClone(e, target);
@@ -486,7 +486,7 @@ FileManager.Gallery = new Class({
 			caption = '';
 		}
 
-		this.imageadd.fade(0);
+		this.imagedragstate.changeState(0);
 
 		if (this.howto) {
 			this.howto.destroy();
