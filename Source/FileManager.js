@@ -3624,6 +3624,9 @@ Asset.javascript(__MFM_ASSETS_DIR__+'/js/milkbox/milkbox.js');
 Asset.css(__MFM_ASSETS_DIR__+'/js/milkbox/css/milkbox.css');
 Asset.css(__MFM_ASSETS_DIR__+'/Css/FileManager.css');
 Asset.css(__MFM_ASSETS_DIR__+'/Css/Additions.css');
+if (Browser.ie && Browser.version <= 7) {
+	Asset.css(__MFM_ASSETS_DIR__+'/Css/FileManager_ie7.css');
+}
 Asset.javascript(__MFM_ASSETS_DIR__+'/js/jsGET.js', {
 	events: {
 		load: (function() {
