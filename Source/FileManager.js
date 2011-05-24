@@ -290,7 +290,7 @@ var FileManager = new Class({
 		this.browserheader.adopt(this.browserLoader);
 		this.browserScroll = new Element('div', {'class': 'filemanager-browserscroll'}).inject(this.browsercontainer).addEvents({
 			'mouseover': (function(e) {
-					//this.diag.log('mouseover: ', e);
+					this.diag.log('browserScroll.mouseover: ', e);
 
 					// sync mouse and keyboard-driven browsing: the keyboard requires that we keep track of the hovered item,
 					// so we cannot simply leave it to a :hover CSS style. Instead, we find out which element is currently
@@ -337,9 +337,8 @@ var FileManager = new Class({
 					}
 				}).bind(this),
 
-			/* 'mouseout' */
 			'mouseleave': (function(e) {
-					//this.diag.log('mouseout: ', e);
+					this.diag.log('browserScroll.mouseleave: ', e);
 
 					// only bother us when the mouse cursor has just left the browser area; anything inside there is handled
 					// by the recurring 'mouseover' event above...
@@ -379,13 +378,13 @@ var FileManager = new Class({
 			onChange: function(x, y)
 			{
 				// restrict scrolling to Y direction only!
-				//this.element.scrollTo(x, y);
 				var scroll = this.element.getScroll();
+				self.diag.log('scroller.onChange: ', x, y, scroll);
 				this.element.scrollTo(scroll.x, y);
 			}
 		});
 
-// Partikule : Thumbs list in preview panel
+		// Thumbs list in preview panel
 		this.browserMenu_thumbList = new Element('a',{
 				'id': 'show_dir_thumb_gallery',
 				'title': this.language.show_dir_thumb_gallery
@@ -408,7 +407,6 @@ var FileManager = new Class({
 				this.diag.log('show_dir_Thumb_gallery button click: current directory!', this.CurrentDir, ', startdir: ', this.options.directory);
 				this.fillInfo();
 			}.bind(this));
-// /Partikule
 
 
 		this.browser_dragndrop_info = new Element('a',{
@@ -444,9 +442,8 @@ var FileManager = new Class({
 			});
 		this.browser_paging.adopt([this.browser_paging_first, this.browser_paging_prev, this.browser_paging_info, this.browser_paging_next, this.browser_paging_last]);
 
-// Partikule : Added the browserMenu_thumbList to the browserheader
+		// Added the browserMenu_thumbList to the browserheader
 		this.browserheader.adopt([this.browserMenu_thumbList, this.browserMenu_thumb, this.browserMenu_list, this.browser_dragndrop_info, this.browser_paging]);
-// /Partikule
 
 		this.browser = new Element('ul', {'class': 'filemanager-browser'}).inject(this.browserScroll);
 
@@ -482,38 +479,33 @@ var FileManager = new Class({
 			}
 		});
 
-// Partikule. Removed new Element('h2', {'class': 'filemanager-headline' :
-// 1. To gain more vertical space for preview
-// 2. Because the user knows this is info about the file
+		// Removed new Element('h2', {'class': 'filemanager-headline' :
+		// 1. To gain more vertical space for preview
+		// 2. Because the user knows this is info about the file
 		this.preview_area.adopt([
 			//new Element('h2', {'class': 'filemanager-headline', text: this.language.more}),
 			this.preview
 		]);
 
-// Partikule.
-// 1. To gain more vertical space for preview
-// 2. Because the user knows this is info about the file
-// 3. Less is more :-)
+		// 1. To gain more vertical space for preview
+		// 2. Because the user knows this is info about the file
+		// 3. Less is more :-)
 		this.info.adopt([this.info_head, this.preview_area]).inject(this.filemanager);
-// /Partikule
 
-// Partikule
-// Add of the thumbnail list in the preview panel
+		// Add of the thumbnail list in the preview panel
 
-// We fill this one while we render the directory tree view to ensure that the deferred thumbnail loading system
-// (using 'detail / mode=direct' requests to obtain the actual thumbnail paths) doesn't become a seriously complex
-// mess.
-// This way, any updates coming from the server are automatically edited into this list; whether it is shown or
-// not depends on the decisions in fillInfo()
-//
-// Usage:
-// - One doubleclick on one thumb in this list will select the file : quicker select
-// - One click displays the preview, but with the file in bigger format : less clicks to see the picture wider.
+		// We fill this one while we render the directory tree view to ensure that the deferred thumbnail loading system
+		// (using 'detail / mode=direct' requests to obtain the actual thumbnail paths) doesn't become a seriously complex
+		// mess.
+		// This way, any updates coming from the server are automatically edited into this list; whether it is shown or
+		// not depends on the decisions in fillInfo()
+		//
+		// Usage:
+		// - One doubleclick on one thumb in this list will select the file : quicker select
+		// - One click displays the preview, but with the file in bigger format : less clicks to see the picture wider.
 
 		// Thumbs list container (in preview panel)
 		this.dir_filelist = new Element('div', {'class': 'filemanager-filelist'});
-
-// /Partikule
 
 		if (!this.options.hideClose) {
 			this.closeIcon = new Element('a', {
@@ -2492,9 +2484,6 @@ var FileManager = new Class({
 				}
 
 
-// Partikule
-// Thumbs list
-
 				// use a closure to keep a reference to the current dg_el, otherwise dg_el, file, etc. will carry the values they got at the end of the loop!
 				(function(dg_el, el, file)
 				{
@@ -2513,8 +2502,6 @@ var FileManager = new Class({
 
 					dg_el.inject(this.dir_filelist);
 				}).bind(this)(dg_el, el, file);
-
-// / Partikule
 			}
 		}
 
