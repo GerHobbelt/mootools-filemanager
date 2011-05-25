@@ -468,7 +468,6 @@ function mkNewFileManager($options = null)
 			'MoveIsAuthorized_cb' => 'FM_IsAuthorized',
 			'ViewIsAuthorized_cb' => 'FM_IsAuthorized',
 			'DetailIsAuthorized_cb' => 'FM_IsAuthorized',
-			'ThumbnailIsAuthorized_cb' => 'FM_IsAuthorized',
 
 			// FileManagerWithAliasSupport-specific options:
 			'Aliases' => $Aliases,
