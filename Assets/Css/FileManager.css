@@ -963,6 +963,9 @@ div.filemanager-wrapper textarea {
 
 	border: 1px solid #bebebe;
 	background: #fff;
+	
+	/* and prevent FF, Chrome, Safari et al from resizing the textarea and destroy the layout that way: */
+	resize: none;
 }
 
 div.filemanager-wrapper button {
