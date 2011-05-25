@@ -235,7 +235,7 @@ session_write_close();
 							var gallery = {
 								name: 'gall2', 
 								autoplay: true, 
-								autoplay_delay: 3, 
+								autoplay_delay: 7, 
 								files: [
 								/*
 									{
