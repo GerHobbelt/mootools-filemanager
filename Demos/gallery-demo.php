@@ -72,7 +72,7 @@ session_write_close();
 			var global = this;
 			var example4 = $('myGallery');
 			var gallery_json = {
-				"/rant_yellow.gif":"",
+				"/rant_yellow.gif":"<h3>testing our augmentation of <em>vanilla milkbox</em></h3>\u000a<p>This caption should really contain a header and a couple of paragraphs with text.</p>\u000a<p><strong>Despite the the angry emoticon, this is actually a quite happy occasion: after all, you're looking at a gallery generated through the mootools filemanager!</strong></p>",
 				"/smilies.gif":"The aspect ratio of this image is extreme; older versions completely screwed up the thumbnail views for such images as the aspect ratio really wasn't taken into account back then...",
 				"/txtmovementvh8.gif":"The aspect ratio of this image is extreme; older versions completely screwed up the thumbnail views for such images as the aspect ratio really wasn't taken into account back then...",
 				"/items with issues/%3cscript%3ealert(%22hello+world%22)%3b%3c%2fscript%3e%0d%0a.png":"(1/3) a series of three where the filename contains embedded HTML (URLencoded) and the FM can cope, but it doesn't get processed all too well by the gallery / tooltip code, or so it seems. Nothing harmful, it's still encoded, but this points at a possible failure mode re security there.",
@@ -158,11 +158,6 @@ session_write_close();
 
 							if (typeof console !== 'undefined' && console.log) console.log('GALLERY.print loop: ', key, ', metadata: ', metadata);
 
-							var input2html = function(str)
-							{
-								return (''+str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-							};
-
 							var tnimg = metadata.thumb250;
 							var iw = metadata.thumb250_width;
 							var ih = metadata.thumb250_height;
@@ -197,7 +192,8 @@ session_write_close();
 							var el = new Element('div').adopt(
 								new Element('a', {
 									href: full_path,
-									title: input2html(caption),             // encode as HTML, suitable for attribute values
+									title: MilkboxGallery.prototype.encodeHTMLforAttr(caption),             // encode as HTML, suitable for attribute values
+									'data-milkbox-caption-is-encoded-html': 1,
 									'data-milkbox': 'gall1',
 									'data-milkbox-size': 'width: ' + metadata.width + ', height: ' + metadata.height,
 									styles: {
@@ -221,12 +217,49 @@ session_write_close();
 							el.store('key', key);
 
 							el.inject(container_el);
+							
+							// also store the calculated values in the serialized array so we can reuse them for the resetExternalGalleries() code below:
+							metadata.milkbox = {
+								href: full_path,
+								title: caption, // do NOT encode as HTML: allows caption formatting this way!
+								size: 'width:' + metadata.width + ', height:' + metadata.height
+							};
 						});
 
 						// now that we have the HTML generated, kick milkbox into (re)scanning:
 						if (milkbox)
 						{
 							milkbox.reloadPageGalleries();
+							
+							// and also kick off a gallery show right away!
+							var gallery = {
+								name: 'gall2', 
+								autoplay: true, 
+								autoplay_delay: 3, 
+								files: [
+								/*
+									{
+										href: 'file1.jpg',
+										size: 'width:900,height:100', 
+										title:'text'
+									},
+									{
+										href: 'file2.html',
+										size: 'w:800,h:200', 
+										title: 'text'
+									}
+								*/
+								]
+							};
+							Object.each(serialized, function(caption, key)
+							{
+								var metadata = files[key];
+
+								gallery.files.push(metadata.milkbox);
+							});
+							
+							milkbox.resetExternalGalleries(gallery);
+							milkbox.open('gall2', 0);
 						}
 					}
 				},
@@ -338,7 +371,7 @@ session_write_close();
 				//autoSizeMaxHeight: 0,
 				//autoSizeMaxWidth: 0,
 				autoSizeMinHeight: 60,
-				autoSizeMinWidth: 100,      // compensate for very small images: always show the controls, at least
+				autoSizeMinWidth: 300,      // compensate for very small images: always show the controls, at least
 				marginTop:10
 			});
 		});

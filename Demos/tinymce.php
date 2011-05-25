@@ -83,7 +83,7 @@ session_write_close();
 						//autoSizeMaxHeight: 0,
 						//autoSizeMaxWidth: 0,
 						autoSizeMinHeight: 60,
-						autoSizeMinWidth: 100,      // compensate for very small images: always show the controls, at least
+						autoSizeMinWidth: 300,      // compensate for very small images: always show the controls, at least
 						marginTop: 10
 					});
 				}
